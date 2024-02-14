@@ -13,7 +13,7 @@ function App() {
     if ( !data ) {
       ( async () => {
         const res = await fetch('https://openlibrary.org/people/mekBot/books/already-read.json');
-        let data = await res.json();
+        data = await res.json();
         data = data['reading_log_entries']; // Extracting relevant data from response.
   
         data = data.map((book, index) => {
@@ -32,10 +32,12 @@ function App() {
         });
         data = data.filter((book) => book); // Filtering out null values.
         sessionStorage.setItem('books', JSON.stringify(data)); // Storing transformed data in sessionStorage.
-        
+        dispatch(setBooks(data)); // Dispatching action to set books data in Redux store.
       })();
+    } else {
+      dispatch(setBooks(data)); // Dispatching action to set books data in Redux store.
     }
-    dispatch(setBooks(data)); // Dispatching action to set books data in Redux store.
+    
   },[]);
 
   const state = useSelector(state => state.books.value);

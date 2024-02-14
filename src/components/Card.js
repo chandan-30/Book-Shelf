@@ -5,14 +5,14 @@ import { changeStatus } from '../store/book';
 import { useDispatch } from 'react-redux';
 
 const Card = ({book}) => {
-    const [read, toggleRead] = useState(book.is_read);
-    const dispatch = useDispatch();
-    if ( !book ) return;
 
-    const clickHandler = () => {
-        
+    const [read, toggleRead] = useState(book.is_read); // State to toggle read status.
+    const dispatch = useDispatch();
+    if ( !book ) return; // Returning null if book prop is not provided.
+
+    const clickHandler = () => { // Function to handle click event on button.
         toggleRead(!read);
-        dispatch(changeStatus(book.id));
+        dispatch(changeStatus(book.id)); // Dispatching action to change book status.
     }
   return (
     <div className='card'>

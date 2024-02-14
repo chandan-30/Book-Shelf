@@ -8,16 +8,17 @@ function App() {
 
   const dispatch = useDispatch();
 
-  useEffect( () => {
-
+  useEffect( () => { // Fetching data when component mounts.
+    let data = JSON.parse(sessionStorage.getItem('books'));
+    if ( !data ) {
       ( async () => {
         const res = await fetch('https://openlibrary.org/people/mekBot/books/already-read.json');
         let data = await res.json();
-        data = data['reading_log_entries'];
+        data = data['reading_log_entries']; // Extracting relevant data from response.
   
         data = data.map((book, index) => {
           if (!book.work.cover_id) {
-            return null;
+            return null; // Skipping if cover ID doesn't exist.
           }
           
           return {
@@ -29,13 +30,12 @@ function App() {
             'is_read': false,
           }
         });
-        data = data.filter((book) => book);
-          console.log(data);
-          sessionStorage.setItem('books', JSON.stringify(data));
-          dispatch(setBooks(data));
+        data = data.filter((book) => book); // Filtering out null values.
+        sessionStorage.setItem('books', JSON.stringify(data)); // Storing transformed data in sessionStorage.
+        
       })();
-    
-    
+    }
+    dispatch(setBooks(data)); // Dispatching action to set books data in Redux store.
   },[]);
 
   const state = useSelector(state => state.books.value);

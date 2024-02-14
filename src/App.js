@@ -9,14 +9,17 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect( () => {
-    let data = JSON.parse(sessionStorage.getItem('books'));
-    if ( !data ) {
+
       ( async () => {
         const res = await fetch('https://openlibrary.org/people/mekBot/books/already-read.json');
-        data = await res.json();
+        let data = await res.json();
         data = data['reading_log_entries'];
   
         data = data.map((book, index) => {
+          if (!book.work.cover_id) {
+            return null;
+          }
+          
           return {
             'id': index,
             'cover': `https://covers.openlibrary.org/b/id/${book.work.cover_id}-M.jpg`,
@@ -26,22 +29,21 @@ function App() {
             'is_read': false,
           }
         });
-        sessionStorage.setItem('books', JSON.stringify(data));
-        
+        data = data.filter((book) => book);
+          console.log(data);
+          sessionStorage.setItem('books', JSON.stringify(data));
+          dispatch(setBooks(data));
       })();
-    }
     
-
-    dispatch(setBooks(data));
+    
   },[]);
 
   const state = useSelector(state => state.books.value);
 
   return (
     <div className="App">
-    <Container>
-      Hello
-    </Container>
+      <Container>
+      </Container>
     </div>
   );
 }
